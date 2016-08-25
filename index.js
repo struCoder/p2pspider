@@ -35,11 +35,8 @@ mysql.connect(function(err) {
       ip: metadata.address,
       infohash: metadata.infohash
     };
-      mysql.query(getInsertSql(data));
+    mysql.query(getInsertSql(data));
   });
 
   p2p.listen(6882, '0.0.0.0');
-
-
-
 })
