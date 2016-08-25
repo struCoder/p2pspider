@@ -11,12 +11,13 @@ mysql.connect(function(err) {
   }
 
   function getInsertSql(data) {
-    return `insert into metadata(name, magnet, ip, infohash, fetched_at) values(${data.name}, ${data.magnet}, ${data.ip}, ${data.infohash}, ${data.fetchedAt})`;
+    return `insert into metadata(name, magnet, ip, infohash, fetched_at)
+            values("${data.name}", "${data.magnet}", "${data.ip}", "${data.infohash}", now())`;
   }
 
   let p2p = P2PSpider({
-    nodesMaxSize: 200,   // be careful
-    maxConnections: 400, // be careful
+    nodesMaxSize: 100,   // be careful
+    maxConnections: 150, // be careful
     timeout: 5000
   });
 
@@ -31,7 +32,6 @@ mysql.connect(function(err) {
     let data = {
       magnet: metadata.magnet,
       name: metadata.info.name ? metadata.info.name.toString() : '',
-      fetched_at: new Date().getTime(),
       ip: metadata.address,
       infohash: metadata.infohash
     };
