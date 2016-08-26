@@ -15,16 +15,27 @@ mysql.connect(function(err) {
             values("${data.name}", "${data.magnet}", "${data.ip}", "${data.infohash}", now())`;
   }
 
+  function isExistHash(hash) {
+    return `select infohash from metadata where infohash = ${hash}`;
+  }
+
   let p2p = P2PSpider({
     nodesMaxSize: 100,   // be careful
     maxConnections: 150, // be careful
     timeout: 5000
   });
 
+
   p2p.ignore(function (infohash, rinfo, callback) {
       // false => always to download the metadata even though the metadata is exists.
-      var theInfohashIsExistsInDatabase = false;
-      callback(theInfohashIsExistsInDatabase);
+      mysql.query(isExistHash(infohash), function(err, rows) {
+        if(rows.length > 0) {
+          callback(true);
+        }
+        else {
+          callback(false);
+        }
+      });
   });
 
   p2p.on('metadata', function (metadata) {
