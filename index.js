@@ -16,7 +16,7 @@ mysql.connect(function(err) {
   }
 
   function isExistHash(hash) {
-    return `select infohash from metadata where infohash = ${hash}`;
+    return `select infohash from metadata where infohash = "${hash}"`;
   }
 
   let p2p = P2PSpider({
@@ -27,9 +27,10 @@ mysql.connect(function(err) {
 
 
   p2p.ignore(function (infohash, rinfo, callback) {
+
       // false => always to download the metadata even though the metadata is exists.
       mysql.query(isExistHash(infohash), function(err, rows) {
-        if(rows.length > 0) {
+        if(rows && rows.length > 0) {
           callback(true);
         }
         else {
